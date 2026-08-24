@@ -19,6 +19,7 @@ const WorkbenchController = siteController => {
         findEntity:         siteController.findEntity,
         getMeta:            siteController.getMeta,
         getRelationService: siteController.getRelationService, // well, this breaks symmetry
+        getEntityService:   siteController.getEntityService,
         getProjectors:      siteController.getProjectors,
         selectId,
     };

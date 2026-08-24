@@ -40,17 +40,86 @@ const ConnectorProjector = workbenchController => {
         const restrictToOneRelation = rel_meta.cardinality === ONE_TO_MANY && isManySide;
 
         const cssMarkerClass = restrictToOneRelation ? "one" : "many";
-        const [labelEl, dropzoneEl] = dom(`
+        const [labelEl, manageEl] = dom(`
             <div>${label}</div>
-            <div class="dropzone ${cssMarkerClass}" title="Drop ${label} here">
-                <div class="drophint"><span class="emoji">⬇️</span></div>
-                <ul id="${relationName}_connector_list"></ul>
-                <div class="remove"><span class="emoji">♻️</span> Remove</div>
+            <div class="manage-rel ${cssMarkerClass}">
+                <select></select>
             </div>`);
-        const relatedListEl = dropzoneEl.querySelector("ul");
-        const removeEl      = dropzoneEl.querySelector(".remove");
+        const selectEl = manageEl.querySelector("select");
+        selectEl.multiple = !restrictToOneRelation;
+
+        const ourRelations = relationTable =>
+            connectorController.relationsById(relationTable, entityFK, entity.id);
+
+        const buildOpts = (allEntities, relationTable) => {
+            const ourRels = ourRelations(relationTable);
+            selectEl.innerHTML = "";
+            allEntities.forEach(relatedEntity => {
+                const isRelated  = ourRels.some(re => re[relatedFK] === relatedEntity.id);
+                const hasPicture = !!relatedEntity.pictureUrl;
+                const [optEl] = dom(`
+                    <option value="${relatedEntity.id}" ${isRelated ? "selected" : ""}>
+                        <div>
+                            ${hasPicture ? `<img src="${relatedEntity.pictureUrl}" />` : ''}
+                            ${relatedEntity.displayedAs}
+                        </div>
+                        <button class="open">➚</button>
+                    </option>`);
+
+                const openEl = optEl.querySelector(".open");
+                openEl.onclick = _evt => workbenchController.selectId(relatedTable, relatedEntity.id);
+
+                selectEl.append(optEl);
+            })
+        }
+
+        const registerChangeHandler = (allEntities, relationTable) => {
+            selectEl.addEventListener("change", _evt => {
+                const selectedIds = Array.from(selectEl.selectedOptions).map(optEl => optEl.value);
+                const ourRels = ourRelations(relationTable);
+
+                ourRels.filter(re => !selectedIds.includes(re[relatedFK])).forEach(rel => {
+                    workbenchController.getRelationService(relationName).removeById(rel.id);
+                });
+                selectedIds.filter(id => !ourRels.some(re => re[relatedFK] === id)).forEach(relatedId => {
+                    workbenchController.getRelationService(relationName).add({[entityFK]: entity.id, [relatedFK]: relatedId});
+                });
+
+                buildOpts(allEntities, relationTable);
+            });
+        }
+
+        Promise.all([
+            workbenchController.getEntityService(relatedTable).getAll(),
+            workbenchController.getRelationService(relationName).getAll()                     // the whole relation table, filtered by ourRelations
+        ]).then(([allEntities, relationTable]) => {
+            buildOpts(allEntities, relationTable);
+            registerChangeHandler(allEntities, relationTable);
+        });
+
+        // workbenchController.getEntityService(relatedTable).getAll()
+        //    .then( entity => console.log("entity", entity) );
+
+        // workbenchController.getRelationService(relationName).getAll()
+        //    .then( relationTable => console.log("relationTable", relationTable) );
+
+        // appController.getEntityService(relatedTable).getAll()
+        //     .then ( newEntities => {
+        //         newEntities.forEach( entity => {
+        //             console.log(entity)
+        //             //appController.entityAdded({entityName: meta.table, entity})
+        //         });
+        //     })
+        // console.log(workbenchController.getProjectors())
+        // console.log(connectorController.relationsById(relationTable, entityFK, entity.id))
+
+        // console.log(workbenchController.getMeta().getEntityMeta("artist"))
+        // console.log(connectorController)
+        // const relatedListEl = dropzoneEl.querySelector("ul");
+        // const removeEl      = dropzoneEl.querySelector(".remove");
 
 
+        /*
         // data binding: fill the relationTable view with data from the domain model and
         // make the LI elements draggable for potential deletion via drag on the recycle bin
         // bind clicking the LI elements to selection for display
@@ -101,11 +170,11 @@ const ConnectorProjector = workbenchController => {
                    connectorController.removeByIndex(relationTable, relatedIndex(relationTable, data.id));
                    updateRelatedListEl(relationTable );
                } );
-        }, "link");
+        }, "link");*/
 
         return [
             /** @type { HTMLLabelElement } */ labelEl,
-            /** @type { HTMLDivElement }   */ dropzoneEl
+            /** @type { HTMLDivElement }   */ manageEl
         ];
     };
 

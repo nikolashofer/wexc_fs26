@@ -113,6 +113,47 @@ section.workbench {
         }
     }
 
+    & .manage-rel select {
+        appearance: base-select;
+        width: 100%;
+
+        &::picker(select) {
+            appearance: base-select;
+        }
+
+        > option {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            > div {
+                display: flex;
+                align-items: center;
+                gap: var(--dst-pad);
+                padding-left: calc(var(--dst-pad) * 3);
+            }
+            img {
+                aspect-ratio: 1 / 1;
+                width: 64px;
+                object-fit: cover;
+            }
+            button {
+                padding: var(--dst-pad);
+                aspect-ratio: 1 / 1;
+            }
+
+            &::checkmark {
+                content: "✓";
+                position: absolute;
+            }
+        }
+    }
+
+    & .manage-rel.many select {
+        min-height: max-content;
+    }
+
 }
 
 summary::marker { /* note: cannot be nested :-( */
