@@ -1,6 +1,6 @@
-import {dom}                         from "../util/dom.js";
-import {CSS_CLASSNAME_SELECTED}      from "../../../../app/client/js/Constants.js";
-import {dragData, registerDraggable} from "../util/DragAndDrop.js";
+import {dom}                         from "../../util/dom.js";
+import {CSS_CLASSNAME_SELECTED}      from "../../../../../app/client/js/Constants.js";
+import {dragData, registerDraggable} from "../../util/DragAndDrop.js";
 
 export { ExplorerProjector }
 

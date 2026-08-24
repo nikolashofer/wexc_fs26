@@ -1,6 +1,6 @@
-import {NO_SELECTION} from "../controller/siteController.js";
-import {dom}          from "../util/dom.js";
-import {AVATAR_URL, PSEUDO_URL} from "../../../../app/client/js/Constants.js";
+import {NO_SELECTION} from "../../controller/siteController.js";
+import {dom}          from "../../util/dom.js";
+import {AVATAR_URL, PSEUDO_URL} from "../../../../../app/client/js/Constants.js";
 
 export { WorkbenchProjector }
 

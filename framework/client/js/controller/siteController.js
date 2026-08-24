@@ -1,5 +1,5 @@
 import {Observable} from "../observable/observable.js";
-import {defaultProjectors} from "../projector/defaultProjectors.js";
+import {defaultProjectors} from "../projector/default/projectors.js";
 
 export {SiteController, NO_SELECTION};
 

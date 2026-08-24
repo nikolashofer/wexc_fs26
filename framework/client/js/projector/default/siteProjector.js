@@ -1,5 +1,5 @@
-import {dom}                 from "../util/dom.js";
-import {WorkbenchController} from "../controller/workbenchController.js";
+import {dom}                 from "../../util/dom.js";
+import {WorkbenchController} from "../../controller/workbenchController.js";
 
 export { SiteProjector }
 

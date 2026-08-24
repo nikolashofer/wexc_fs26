@@ -1,7 +1,7 @@
-import {dom}                                           from "../util/dom.js";
-import {dragData, registerDraggable, registerDropzone} from "../util/DragAndDrop.js";
-import {RelationController}                            from "../controller/relationController.js";
-import {ONE_TO_MANY}                                   from "../types.js";
+import {dom}                                           from "../../util/dom.js";
+import {dragData, registerDraggable, registerDropzone} from "../../util/DragAndDrop.js";
+import {RelationController}                            from "../../controller/relationController.js";
+import {ONE_TO_MANY}                                   from "../../types.js";
 
 export { ConnectorProjector }
 

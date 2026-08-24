@@ -1,5 +1,5 @@
-import {ConnectorProjector} from "../../../framework/client/js/projector/connectorProjector.js";
-import {defaultProjectors}       from "../../../framework/client/js/projector/defaultProjectors.js";
+import {ConnectorProjector} from "../../../framework/client/js/projector/default/connectorProjector.js";
+import {defaultProjectors}       from "../../../framework/client/js/projector/default/projectors.js";
 import {ARTWORK, ARTWORK_RATING} from "./appTypes.js";
 import {dom}                     from "../../../framework/client/js/util/dom.js";
 
