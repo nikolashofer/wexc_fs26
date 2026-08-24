@@ -19,13 +19,13 @@
     import {Meta}              from "./js/meta.js";
     import {memoryDB}          from './js/memoryDB.js';
     import {DevServiceFactory} from "../../framework/client/js/service/dev/devServiceFactory.js";
-    import {appProjectors}     from "./js/appProjectors.js";
-    // import {defaultProjectors} from "../../framework/client/js/projector/defaultProjectors.js";
+    // import {appProjectors}     from "./js/appProjectors.js";
+    import {nikProjectors} from "../../framework/client/js/projector/nik/projectors.js";
 
     const siteController = SiteController();
 
-    siteController.setProjectors(appProjectors);
-    // siteController.setProjectors(defaultProjectors);
+    // siteController.setProjectors(appProjectors);
+    siteController.setProjectors(nikProjectors);
 
     siteController.setServiceFactory(DevServiceFactory(Meta(), memoryDB))
         .then( _ => {
