@@ -1,6 +1,6 @@
 import {Observable} from "../observable/observable.js";
 import {defaultProjectors} from "../projector/default/projectors.js";
-import { loadCss } from "../util/loadCss.js";
+import {loadProjectorCss} from "../util/loadCss.js";
 
 export {SiteController, NO_SELECTION};
 
@@ -35,7 +35,7 @@ const SiteController = () => {
     const getProjectors = () => projectors;
     const setProjectors = newProjectors => {
         projectors = newProjectors;
-        loadCss(newProjectors.cssHrefs);
+        loadProjectorCss(newProjectors.cssHrefs);
     };
 
     /**
