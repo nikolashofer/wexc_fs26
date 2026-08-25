@@ -1,6 +1,4 @@
 import {Observable} from "../observable/observable.js";
-import {defaultProjectors} from "../projector/default/projectors.js";
-import {loadProjectorCss} from "../util/loadCss.js";
 
 export {SiteController, NO_SELECTION};
 
@@ -30,13 +28,10 @@ const SiteController = () => {
     let meta = undefined;
 
     // might be overridden by app on startup. Not to be changed during runtime (for now)
-    let projectors = defaultProjectors;
+    let projectors = undefined;
 
     const getProjectors = () => projectors;
-    const setProjectors = newProjectors => {
-        projectors = newProjectors;
-        loadProjectorCss(newProjectors.cssHrefs);
-    };
+    const setProjectors = newProjectors => projectors = newProjectors;
 
     /**
      * Central management that keeps the currently used service factory in a singleton.
