@@ -121,7 +121,8 @@ section.workbench {
             appearance: base-select;
         }
 
-        > option {
+        > option, 
+        selectedcontent {
             position: relative;
             display: flex;
             align-items: center;
@@ -146,6 +147,15 @@ section.workbench {
             &::checkmark {
                 content: "✓";
                 position: absolute;
+            }
+        }
+
+        selectedContent {
+            width: 100%;
+            /* padding-right: calc(var(--dst-pad) * 3); */
+
+            > div {
+                padding-left: 0;
             }
         }
     }

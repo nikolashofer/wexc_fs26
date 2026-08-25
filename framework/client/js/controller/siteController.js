@@ -1,5 +1,6 @@
 import {Observable} from "../observable/observable.js";
 import {defaultProjectors} from "../projector/default/projectors.js";
+import { loadCss } from "../util/loadCss.js";
 
 export {SiteController, NO_SELECTION};
 
@@ -32,7 +33,10 @@ const SiteController = () => {
     let projectors = defaultProjectors;
 
     const getProjectors = () => projectors;
-    const setProjectors = newProjectors => projectors = newProjectors;
+    const setProjectors = newProjectors => {
+        projectors = newProjectors;
+        loadCss(newProjectors.cssHrefs);
+    };
 
     /**
      * Central management that keeps the currently used service factory in a singleton.

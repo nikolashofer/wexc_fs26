@@ -1,0 +1,128 @@
+/* design system: color palette, fonts, sizes, spaces */
+
+:root {
+    --clr-bg-dark:    hsl(240deg 100% 30%);
+    --clr-bg-half:    hsl(240deg 100% 94%);
+    --clr-fg-light:   white;
+    --clr-accent:     orange;
+    --clr-attention:  magenta;
+    --clr-todo:       var(--clr-bg-dark);
+
+    --size-base:      1rem;
+
+    --dst-pad:        calc(var(--size-base) / 2); /* padding distance for layouting */
+
+    --font-base:      system-ui;
+    --letter-spacing: .02em;
+
+    --anim-micro:     .5s ease-out allow-discrete;
+
+    --shadow-small:   .1em .1em .2em 0 #0004;
+    --border-radius:  calc(var(--size-base) / 4);
+
+    interpolate-size: allow-keywords;
+}
+
+
+/* make the details open and close with smooth transition */
+details {
+    overflow: clip;
+}
+
+details::details-content {
+    block-size: 0;
+    opacity:    .1;
+    transition: block-size         var(--anim-micro),
+                opacity            var(--anim-micro),
+                content-visibility var(--anim-micro);
+}
+
+details[open]::details-content {
+    block-size: auto;
+    opacity:    1;
+    transform:  translateY(0);
+}
+
+input {
+    --_clr-bottom: var(--clr-bg-half);
+
+    &[type=text],
+    &[type=date],
+    &[type=url] {
+        border-color: transparent transparent var(--_clr-bottom) transparent;
+        font-size:    unset;
+
+        &:invalid {
+            --_clr-bottom: var(--clr-todo);
+        }
+
+        &:user-invalid {
+            --_clr-bottom: var(--clr-attention);
+        }
+    }
+}
+
+:focus-visible {
+    outline-color: var(--clr-accent);
+}
+
+label:has( + [required])::after {
+    content: " *";
+}
+
+label:has( + [required]:invalid)::after {
+    color: var(--clr-attention);
+}
+
+button, input[type=submit] {
+    background-image: radial-gradient(circle at 40% 20%,
+    var(--clr-bg-half),
+    62%,
+    oklch(from var(--clr-bg-half) calc(l * 0.95) calc(c * 1.1) h)
+                      );
+    border-radius:    var(--border-radius);
+    border-color:     hsl(from currentColor h s l / .5); /* weakened user-agent colors */
+    padding:          var(--dst-pad) calc(var(--dst-pad) * 2);
+    box-shadow:       var(--shadow-small);
+    font-size:        var(--size-base);
+    letter-spacing:   var(--letter-spacing);
+    color:            var(--clr-bg-dark);
+    font-weight:      500;
+}
+
+.noSelection {
+    color:          var(--clr-bg-dark);
+    font-weight:    bolder;
+    font-size:      larger;
+    opacity:        .5;
+    letter-spacing: 0.07em;
+}
+
+.readonly {
+    opacity: 0.5;
+}
+
+.selected::after {
+    content: " <";
+    color: var(--clr-accent);
+    font-weight: bold;
+    transition: color .5s ease-out;
+    @starting-style {
+        color: black;
+    }
+}
+
+/* do not show broken images */
+img {
+  position: relative;
+}
+img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: aliceblue;
+
+}
+

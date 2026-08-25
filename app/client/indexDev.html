@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/app.css">
     <title>Artist App (Development Mode)</title>
 </head>
 <body>
@@ -19,24 +18,52 @@
     import {Meta}              from "./js/meta.js";
     import {memoryDB}          from './js/memoryDB.js';
     import {DevServiceFactory} from "../../framework/client/js/service/dev/devServiceFactory.js";
-    // import {appProjectors}     from "./js/appProjectors.js";
+    import {defaultProjectors} from "../../framework/client/js/projector/default/projectors.js";
     import {nikProjectors} from "../../framework/client/js/projector/nik/projectors.js";
 
-    const siteController = SiteController();
+    // TODO: move reset to function from framework
+    const init = (projectors) => {
+        const siteController = SiteController();
 
-    // siteController.setProjectors(appProjectors);
-    siteController.setProjectors(nikProjectors);
+        const headEl = document.getElementsByTagName("head")[0];
+        Array.from(headEl.children).forEach(child => {
+            if (child.tagName === "LINK" && child.getAttribute("rel") === "stylesheet") {
+                child.remove();
+            }
+        });
 
-    siteController.setServiceFactory(DevServiceFactory(Meta(), memoryDB))
-        .then( _ => {
-            const siteProjector  = siteController.getProjectors().siteProjector(siteController);
-            document.body.append(...siteProjector.projectBodyContent());
-            return siteController.findEntity(ARTIST, "0");
-        })
-        .then( entity => {
-            siteController.setSelection({ entityName: ARTIST, entity })
-        } );
+        siteController.setProjectors(projectors);
+
+        siteController.setServiceFactory(DevServiceFactory(Meta(), memoryDB))
+            .then( _ => {
+                const siteProjector  = siteController.getProjectors().siteProjector(siteController);
+                const contentHolderEl = document.getElementById("content");
+                contentHolderEl.innerHTML = "";
+                contentHolderEl.append(...siteProjector.projectBodyContent());
+                return siteController.findEntity(ARTIST, "0");
+            })
+            .then( entity => {
+                siteController.setSelection({ entityName: ARTIST, entity })
+            } );
+    }
+
+    // TODO: make like a registry of projectors which are registered here instead of hardcoding
+    document.getElementById("default").addEventListener("click", _e => {
+        init(defaultProjectors);
+    });
+    document.getElementById("nik").addEventListener("click", _e => {
+        init(nikProjectors);
+    });
+
+    init(nikProjectors);
 
 </script>
+
+<div id="content"></div>
+
+<div style="position: fixed; bottom: 0; right: 0;">
+    <button id="default">Default</button>
+    <button id="nik">Nik</button>
+</div>
 </body>
 </html>

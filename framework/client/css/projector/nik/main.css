@@ -1,0 +1,203 @@
+@import "layout.css";
+@import "design.css";
+
+body {
+    font-family: var(--font-base), system-ui;
+}
+
+header, footer {
+    background:    var(--clr-bg-dark);
+    color:         var(--clr-fg-light);
+    padding-block: var(--dst-pad);
+    text-align:    center;
+
+    & h1 {
+        margin: unset;
+        font:   unset;
+    }
+}
+
+main {
+    & .boxes {
+        background-color: var(--clr-bg-half);
+        padding:          var(--dst-pad);
+
+        & details {
+            margin-top:       var(--dst-pad);
+            background-color: #fff7;
+            border-radius:    var(--border-radius);
+            padding:          var(--dst-pad);
+            box-shadow:       var(--shadow-small);
+
+            & summary {
+                color:       var(--clr-bg-dark);
+                font-weight: bold;
+                min-width:   16ch; /* avoid too much of a jump when all summaries close */
+            }
+        }
+    }
+}
+
+
+ul {
+    list-style: none;
+    padding:    0;
+    margin:     .2em 0 0 0;
+
+    & li {
+        padding: .2em;
+
+        &:hover {
+            background-color: var(--clr-bg-half);
+        }
+    }
+}
+
+
+section.workbench {
+
+    & .dropzone {
+        background-color: var(--clr-bg-half);
+        padding:          var(--dst-pad);
+        border-radius:    var(--border-radius);
+        position:         relative;
+        overflow:         clip;
+
+        &.one {
+            background-color: hsl(from var(--clr-bg-half) h s l / 0.5 );
+            &:hover .drophint {
+                opacity:  0;
+            }
+        }
+
+        & .drophint { /* the control elements: drop hint, hidden per default, appears on hover */
+            position: absolute;
+            inset:    0 var(--dst-pad) var(--dst-pad) auto;
+            opacity:  0;
+            transform: translateY(-1lh);
+        }
+        &:hover .drophint {
+            transform: translateY(0);
+            opacity:  .5;
+            transition: all .5s ease-out;
+        }
+
+        & .remove { /* drop region to unlink relations */
+            text-align:       center;
+            background-color: #fff6;
+            box-shadow:       var(--shadow-small) inset;
+            letter-spacing:   var(--letter-spacing);
+            padding-inline:   var(--dst-pad);
+            opacity:          .7;
+            filter:           grayscale(1);
+        }
+
+        & ul {
+            /*max-height: 5lh;*/ /* we might want to resurrect this later (?) drag and scroll can conflict */
+            /*overflow:   scroll;*/
+            min-height: 1lh;
+        }
+    }
+
+    & .preview {
+        box-shadow: var(--shadow-small);
+        overflow:   clip;
+        border:     1px solid black;
+        padding:    var(--dst-pad);
+        max-height: calc(var(--size-base) * 20);
+
+        & img {
+            height:     100%;
+            object-fit: cover;
+            aspect-ratio: 3 / 4;
+        }
+    }
+
+    & .manage-rel select {
+        appearance: base-select;
+        width: 100%;
+
+        &::picker(select) {
+            appearance: base-select;
+        }
+
+        > option, 
+        selectedcontent {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            > div {
+                display: flex;
+                align-items: center;
+                gap: var(--dst-pad);
+                padding-left: calc(var(--dst-pad) * 3);
+            }
+            img {
+                aspect-ratio: 1 / 1;
+                width: 64px;
+                object-fit: cover;
+            }
+            button {
+                padding: var(--dst-pad);
+                aspect-ratio: 1 / 1;
+            }
+
+            &::checkmark {
+                content: "✓";
+                position: absolute;
+            }
+        }
+
+        selectedContent {
+            width: 100%;
+            /* padding-right: calc(var(--dst-pad) * 3); */
+
+            > div {
+                padding-left: 0;
+            }
+        }
+    }
+
+    & .manage-rel.many select {
+        min-height: max-content;
+    }
+
+}
+
+summary::marker { /* note: cannot be nested :-( */
+    color: rgb( from var(--clr-bg-dark) r g b / .4);
+}
+
+.emoji {
+    font-size: 1.2em;
+}
+
+.fancy {
+    font-family: cursive;
+}
+
+/* specialized star projector */
+.starredRating {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dst-pad);
+    & .stars {
+        display: flex;
+        gap: var(--dst-pad);
+        & > input {
+            display: none;
+        }
+        & > label {
+            font-size: 1lh;
+            color: var(--clr-accent);
+            opacity: .4;
+            user-select: none;
+        }
+        & > label:has(~:checked) {
+            opacity: 1;
+        }
+
+    }
+}

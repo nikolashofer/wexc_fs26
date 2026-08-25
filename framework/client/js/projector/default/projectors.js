@@ -29,6 +29,7 @@ const connectorProjector = (workbenchController) => {
  * @property { * } explorerProjector
  * @property { * } workbenchProjector
  * @property { * } connectorProjector
+ * @property { Array<String> } cssHrefs
  */
 /** @type { ProjectorProviderType } */
 const defaultProjectors = {
@@ -36,5 +37,6 @@ const defaultProjectors = {
     explorerProjector,
     workbenchProjector,
     connectorProjector,
+    cssHrefs: ["default/main.css"]
 };
 

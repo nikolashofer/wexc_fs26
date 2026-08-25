@@ -29,6 +29,7 @@ const connectorProjector = (workbenchController) => {
  * @property { * } explorerProjector
  * @property { * } workbenchProjector
  * @property { * } connectorProjector
+ * @property { Array<String> } cssHrefs
  */
 /** @type { ProjectorProviderType } */
 const nikProjectors = {
@@ -36,5 +37,6 @@ const nikProjectors = {
     explorerProjector,
     workbenchProjector,
     connectorProjector,
+    cssHrefs: ["nik/main.css"],
 };
 
