@@ -1,22 +1,21 @@
-export { loadCss, loadProjectorCss, removeCss }
+export { loadStylesheets, loadProjectorStylesheets, removeStylesheets }
 
-const loadCss = (...hrefs) => {
+const loadStylesheets = (...hrefs) => {
     const headEl = document.getElementsByTagName("head")[0];
     hrefs.forEach((href) => {
-        const link  = document.createElement("link");
-        link.rel    = "stylesheet";
-        link.href   = href;
-        headEl.appendChild(link);
+        const linkEl  = document.createElement("link");
+        linkEl.rel    = "stylesheet";
+        linkEl.href   = href;
+        headEl.appendChild(linkEl);
     });
 }
 
-const PROJECTOR_CSS_HREF_BASE = "../../framework/client/css/projector";
+const PROJECTOR_STYLESHEET_BASE_PATH = "../../framework/client/css/projector";
 
-// TODO: maybe rename to loadProjectorStylesheets loadStylesheets respectively
-const loadProjectorCss = (projectors) =>
-    loadCss(projectors.cssHrefs.map(href => `${PROJECTOR_CSS_HREF_BASE}/${href}`))
+const loadProjectorStylesheets = projectors =>
+    loadStylesheets(...projectors.stylesheetPaths.map(href => `${PROJECTOR_STYLESHEET_BASE_PATH}/${href}`))
 
-const removeCss = () => {
+const removeStylesheets = () => {
     const headEl = document.querySelector("head");
     Array.from(headEl.children).forEach(child => {
         if (child.tagName === "LINK" && child.getAttribute("rel") === "stylesheet") {

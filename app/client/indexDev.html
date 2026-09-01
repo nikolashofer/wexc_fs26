@@ -11,6 +11,7 @@
     // general imports
 
     import {SiteController} from "../../framework/client/js/controller/siteController.js";
+    import {init} from "../../framework/client/js/init.js";
 
     // app starter specific imports
 
@@ -18,19 +19,19 @@
     import {Meta}              from "./js/meta.js";
     import {memoryDB}          from './js/memoryDB.js';
     import {DevServiceFactory} from "../../framework/client/js/service/dev/devServiceFactory.js";
-    import {init, DEFAULT_OPTS} from "../../framework/client/js/init.js";
+
+    import {defaultProjectors} from "../../framework/client/js/projector/default/projectors.js";
+    import {nikProjectors} from "../../framework/client/js/projector/nik/projectors.js";
 
     const siteController = SiteController();
     const changeProjectors = init(
         siteController,
         DevServiceFactory(Meta(), memoryDB),
         {
-            ...DEFAULT_OPTS,
-            onInitialized: () => {
+            onInitialized: _meta => 
                 siteController
                     .findEntity(ARTIST, "0")
-                    .then(entity => siteController.setSelection({ entityName: ARTIST, entity }));
-            }
+                    .then(entity => siteController.setSelection({ entityName: ARTIST, entity }))
         }
     );
 
