@@ -91,9 +91,7 @@ const ConnectorProjector = workbenchController => {
                 const relsToRemove = ourRels.filter(re => !selectedIds.includes(re[relatedFK]));
 
                 relsToAdd.forEach(relId => {
-                    if (shouldClearOtherRels) {
-                       connectorController.removeAllById(relationTable, relatedFK, relId);
-                    }
+                    if (shouldClearOtherRels) connectorController.removeAllById(relationTable, relatedFK, relId);
                     const newRel = {[entityFK]: entity.id, [relatedFK]: relId};
                     connectorController.addRelation(rel_meta, relationTable, newRel);
                 });

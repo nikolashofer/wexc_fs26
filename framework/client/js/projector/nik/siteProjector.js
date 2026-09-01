@@ -56,7 +56,7 @@ const SiteProjector = siteController => {
     const projectBodyContent = () => {
         const bodyContent = dom(`
         <header>
-            <h1>FHNW-WoWeb <span class="fancy">Lecturer Edition</span></h1>
+            <h1>FHNW-WoWeb <span class="fancy">Nik Edition</span></h1>
         </header>
         <main>        
         </main>        
