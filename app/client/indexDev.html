@@ -24,31 +24,21 @@
     import {nikProjectors} from "../../framework/client/js/projector/nik/projectors.js";
 
     const siteController = SiteController();
-    const changeProjectors = init(
+    init(
         siteController,
         DevServiceFactory(Meta(), memoryDB),
         {
+            initialProjectors: nikProjectors,
             onInitialized: _meta => 
                 siteController
                     .findEntity(ARTIST, "0")
                     .then(entity => siteController.setSelection({ entityName: ARTIST, entity }))
         }
     );
-
-    document.getElementById("default").addEventListener("click", _e => {
-        changeProjectors(defaultProjectors);
-    });
-    document.getElementById("nik").addEventListener("click", _e => {
-        changeProjectors(nikProjectors);
-    });
-
 </script>
 
 <div id="root"></div>
+<div id="projectors-switcher" style="position: fixed; bottom: 0; right: 0;"></div>
 
-<div style="position: fixed; bottom: 0; right: 0;">
-    <button id="default">Default</button>
-    <button id="nik">Nik</button>
-</div>
 </body>
 </html>

@@ -33,6 +33,7 @@ const connectorProjector = (workbenchController) => {
  */
 /** @type { ProjectorProviderType } */
 const defaultProjectors = {
+    key: "default",
     siteProjector,
     explorerProjector,
     workbenchProjector,
