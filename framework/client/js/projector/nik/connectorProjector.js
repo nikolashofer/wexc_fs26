@@ -38,6 +38,7 @@ const ConnectorProjector = workbenchController => {
         // when the entity is on the many side of a one-to-many relation,
         // we have to enforce, that there is at most one relation in this connector
         const restrictToOneRelation = rel_meta.cardinality === ONE_TO_MANY && isManySide;
+        const shouldClearOtherRels = rel_meta.cardinality === ONE_TO_MANY && isOneSide;
 
         const cssMarkerClass = restrictToOneRelation ? "one" : "many";
         const [labelEl, manageEl] = dom(`
@@ -48,12 +49,80 @@ const ConnectorProjector = workbenchController => {
         const selectEl = manageEl.querySelector("select");
         selectEl.multiple = !restrictToOneRelation;
 
-        const ourRelations = relationTable =>
+        const loadRelationData = () => 
+            Promise.all([
+                workbenchController.getEntityService(relatedTable).getAll(),
+                workbenchController.getRelationService(relationName).getAll()
+            ]);
+
+        const buildOpts = (foreignEntities, relationTable) => {
+            selectEl.innerHTML = buildOptsInitialHTML();
+            const ourRels = connectorController.relationsById(relationTable, entityFK, entity.id);
+            foreignEntities.forEach(foreignEntity => {
+                const isRelated  = ourRels.some(re => re[relatedFK] === foreignEntity.id);
+                const [optEl] = dom(`
+                    <option value="${foreignEntity.id}" ${isRelated ? "selected" : ""}>
+                        <div>
+                            ${!!foreignEntity.pictureUrl ? `<img src="${foreignEntity.pictureUrl}" />` : ''}
+                            ${foreignEntity.displayedAs}
+                        </div>
+                        <button class="open">➚</button>
+                    </option>`);
+
+                const openEl = optEl.querySelector(".open");
+                openEl.onclick = _evt => workbenchController.selectId(relatedTable, foreignEntity.id);
+                selectEl.append(optEl);
+            })
+        }
+
+        const buildOptsInitialHTML = () => {
+            let base = "<button><selectedcontent></selectedcontent></button>";
+            return restrictToOneRelation ? `${base}<option value="">No selection...</option>` : base;
+        }
+
+        loadRelationData().then(([foreignEntities, relationTable]) => 
+            buildOpts(foreignEntities, relationTable));
+
+        selectEl.onchange = _evt => {
+            const selectedIds = Array.from(selectEl.selectedOptions).map(optEl => optEl.value);
+            loadRelationData().then(([foreignEntities, relationTable]) => {
+                const ourRels = connectorController.relationsById(relationTable, entityFK, entity.id);
+                const relsToAdd = selectedIds.filter(id => !ourRels.some(re => re[relatedFK] === id));
+                const relsToRemove = ourRels.filter(re => !selectedIds.includes(re[relatedFK]));
+
+                relsToAdd.forEach(relId => {
+                    if (shouldClearOtherRels) {
+                       connectorController.removeAllById(relationTable, relatedFK, relId);
+                    }
+                    const newRel = {[entityFK]: entity.id, [relatedFK]: relId};
+                    connectorController.addRelation(rel_meta, relationTable, newRel);
+                });
+                relsToRemove.forEach(rel => {
+                    console.log("rel", rel);
+                    console.log("idx", connectorController.relationIndexByPair(relationTable, entityFK, entity.id, relatedFK, rel[relatedFK]));
+                    connectorController.removeByIndex(relationTable, relatedIndex(relationTable, rel[relatedFK]));
+                });
+
+                buildOpts(foreignEntities, relationTable);
+            });
+        }
+
+        const relatedIndex = (relationTable, relatedFkValue) =>
+            connectorController.relationIndexByPair(relationTable, entityFK, entity.id, relatedFK, relatedFkValue);
+
+
+
+
+        /*const ourRelations = relationTable =>
             connectorController.relationsById(relationTable, entityFK, entity.id);
 
-        const buildOpts = (allEntities, relationTable) => {
+        const otherRelationsToRelated = (relationTable, relatedId) =>
+            connectorController.relationsById(relationTable, relatedFK, relatedId);
+
+        const buildOpts2 = (allEntities, relationTable) => {
             const ourRels = ourRelations(relationTable);
-            selectEl.innerHTML = "";
+            selectEl.innerHTML = buildOptsInitialHTML();
+            // selectEl.size = allEntities.length;
             allEntities.forEach(relatedEntity => {
                 const isRelated  = ourRels.some(re => re[relatedFK] === relatedEntity.id);
                 const hasPicture = !!relatedEntity.pictureUrl;
@@ -82,6 +151,12 @@ const ConnectorProjector = workbenchController => {
                     workbenchController.getRelationService(relationName).removeById(rel.id);
                 });
                 selectedIds.filter(id => !ourRels.some(re => re[relatedFK] === id)).forEach(relatedId => {
+                    if (rel_meta.cardinality === ONE_TO_MANY && isOneSide) {
+                        const otherRels = otherRelationsToRelated(relationTable, relatedId);
+                        otherRels.forEach(otherRel => {
+                            workbenchController.getRelationService(relationName).removeById(otherRel.id);
+                        })
+                    }
                     workbenchController.getRelationService(relationName).add({[entityFK]: entity.id, [relatedFK]: relatedId});
                 });
 
@@ -91,11 +166,54 @@ const ConnectorProjector = workbenchController => {
 
         Promise.all([
             workbenchController.getEntityService(relatedTable).getAll(),
-            workbenchController.getRelationService(relationName).getAll()                     // the whole relation table, filtered by ourRelations
+            workbenchController.getRelationService(relationName).getAll()
         ]).then(([allEntities, relationTable]) => {
-            buildOpts(allEntities, relationTable);
-            registerChangeHandler(allEntities, relationTable);
-        });
+            // buildOpts2(allEntities, relationTable);
+            // registerChangeHandler(allEntities, relationTable);
+        });*/
+
+        /*const registerChangeHandler = (allEntities, relationTable) => {
+            selectEl.addEventListener("change", _evt => {
+                const selectedIds = Array.from(selectEl.selectedOptions).map(optEl => optEl.value);
+                const ourRels = ourRelations(relationTable);
+
+                // if (restrictToOneRelation) connectorController.removeAllById(relationTable, entityFK, entity.id);
+                // if (restrictToOneRelation) connectorController.removeAllById(relationTable, entityFK, entity.id);
+                // console.log(relatedFK)
+                // console.log(relationTable);
+
+                ourRels.filter(re => !selectedIds.includes(re[relatedFK])).forEach(rel => {
+                    // if (isOneSide) console.log("removed")
+                    workbenchController.getRelationService(relationName).removeById(rel.id);
+                });
+                selectedIds.filter(id => !ourRels.some(re => re[relatedFK] === id)).forEach(relatedId => {
+                    // if (restrictToOneRelation) connectorController.removeAllById(relationTable, relatedFK, relatedId);
+                    // if (restrictToOneRelation) {
+                    //     console.log(relatedFK);
+                    //     console.log(relatedId);
+                    //     connectorController.removeAllById(relationTable, relatedFK, relatedId);
+                    // }
+                    // if (restrictToOneRelation) {
+                    //     const otherRels = otherRelationsToRelated(relationTable, relatedId);
+                    //     otherRels.forEach(otherRel => {
+                    //         workbenchController.getRelationService(relationName).removeById(otherRel.id);
+                    //     })
+                    // }
+                    if (rel_meta.cardinality === ONE_TO_MANY && isOneSide) {
+
+                    }
+                    workbenchController.getRelationService(relationName).add({[entityFK]: entity.id, [relatedFK]: relatedId});
+                });
+
+                buildOpts(allEntities, relationTable);
+                // Promise.all([
+                //     workbenchController.getEntityService(relatedTable).getAll(),
+                //     workbenchController.getRelationService(relationName).getAll()
+                // ]).then(([allEntities, relationTable]) => {
+                //     buildOpts(allEntities, relationTable);
+                // });
+            });
+        }*/
 
         // workbenchController.getEntityService(relatedTable).getAll()
         //    .then( entity => console.log("entity", entity) );
